@@ -1,0 +1,21 @@
+server:
+  port: 8558
+spring:
+  mail:
+    host: in-v3.mailjet.com
+    port: 587
+    username: ${MAIL_JET_API_KEY}
+    password: ${MAIL_JET_API_SECRET}
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starts-sl:
+            enable: true
+            required: true
+
+  data:
+    mongodb:
+      uri: "mongodb+srv://admin:akkiintojavaman@cluster0.yh4lznp.mongodb.net/?retryWrites=true&w=majority"
+      database: "MeetelloBE"
