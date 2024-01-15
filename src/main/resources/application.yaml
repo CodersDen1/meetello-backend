@@ -17,5 +17,5 @@ spring:
 
   data:
     mongodb:
-      uri: "mongodb+srv://admin:akkiintojavaman@cluster0.yh4lznp.mongodb.net/?retryWrites=true&w=majority"
+      uri: ${MONGO_URL}
       database: "MeetelloBE"
