@@ -15,6 +15,12 @@ spring:
             enable: true
             required: true
 
+twilio:
+  accountSid: ${TWILIO_API_KEY}
+  authToken: ${TWILIO_AUTH_KEY}
+  phoneNumber: ${TWILIO_PHONE_NUMBER}
+
+
   data:
     mongodb:
       uri: ${MONGO_URL}
