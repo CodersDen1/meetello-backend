@@ -17,8 +17,11 @@ public class UserEntity {
     @Id
     private  String id;
 
-   @NonNull
-   private String userAddress;
+
+   private String email;
+
+   private String phoneNumber;
+
 
     @NonNull
     private String otp;

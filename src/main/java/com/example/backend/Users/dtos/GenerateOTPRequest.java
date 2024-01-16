@@ -6,5 +6,6 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 public class GenerateOTPRequest {
-    @NonNull private String userAddress;
+     private String email;
+     private String phoneNumber;
 }

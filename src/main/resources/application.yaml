@@ -14,6 +14,11 @@ spring:
           starts-sl:
             enable: true
             required: true
+  data:
+    mongodb:
+      uri: ${MONGO_URL}
+      database: "Meetello"
+
 
 twilio:
   accountSid: ${TWILIO_API_KEY}
@@ -21,7 +26,4 @@ twilio:
   phoneNumber: ${TWILIO_PHONE_NUMBER}
 
 
-  data:
-    mongodb:
-      uri: ${MONGO_URL}
-      database: "MeetelloBE"
+
