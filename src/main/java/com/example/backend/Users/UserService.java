@@ -26,7 +26,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final  SmsService smsService;
     private final HashingOtp hashingOtp;
-    private final HashSpliter hashSpliter;
 
 
     @Value("${HASH_SECRET}")
@@ -37,7 +36,6 @@ public class UserService {
         this.javaMailSender = javaMailSender;
         this.smsService = smsService;
         this.hashingOtp = hashingOtp;
-        this.hashSpliter = hashSpliter;
     }
 
     public void generateAndSendOTP(GenerateOTPRequest req) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -65,8 +63,10 @@ public class UserService {
 //           }
            String requestHash = requestBodyHash.get(0);
             long currentTime = System.currentTimeMillis();
+
+            if(currentTime>storedExpiry) throw  new RuntimeException(" this OTP is expired");
             //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash) && storedExpiry >= currentTime;
+           return req.getOtp() != null && storedHash.equals(requestHash);
 
 
        } else if (req.getPhoneNumber()!=null) {
@@ -89,8 +89,10 @@ public class UserService {
            String requestHash = requestBodyHash.get(0);
            long currentTime = System.currentTimeMillis();
 
+           if (currentTime > storedExpiry) throw new RuntimeException("This OTP is expired");
+
            //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash) && storedExpiry >= currentTime;
+           return req.getOtp() != null && storedHash.equals(requestHash);
 
        }
         return false;
