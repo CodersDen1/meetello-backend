@@ -5,16 +5,17 @@ import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
-import java.sql.Timestamp;
+
 import java.time.Instant;
 import java.util.Date;
+import java.util.Random;
 
 @Service
 public class JwtService {
 
-    @Value("${JWT_KEY}")
-    String jwtKey;
+
+
+    String jwtKey="aotghldfvasfblkbjdxmcjhbdvnljhkvmdvbnvJvzvbxvjkdlmvzvbndlxz";
 
     private final Algorithm algorithm = Algorithm.HMAC256(jwtKey);
 
