@@ -25,3 +25,7 @@ twilio:
   authToken: ${TWILIO_AUTH_KEY}
   phoneNumber: ${TWILIO_PHONE_NUMBER}
 
+
+jwt:
+  key: ${"JWT"}
+

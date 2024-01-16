@@ -26,4 +26,6 @@ twilio:
   phoneNumber: ${TWILIO_PHONE_NUMBER}
 
 
+jwt:
+  key: ${"JWT"}
 

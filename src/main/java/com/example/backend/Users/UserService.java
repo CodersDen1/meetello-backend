@@ -64,9 +64,9 @@ public class UserService {
            String requestHash = requestBodyHash.get(0);
             long currentTime = System.currentTimeMillis();
 
-            if(currentTime>storedExpiry) throw  new RuntimeException(" this OTP is expired");
+
             //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash);
+           return req.getOtp() != null && storedHash.equals(requestHash) && currentTime<=storedExpiry;
 
 
        } else if (req.getPhoneNumber()!=null) {
@@ -144,6 +144,28 @@ public class UserService {
 
 
 
+    public UserEntity getUser(String userId){
+        UserEntity user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+        return  user;
+    }
+
+    public  UserEntity getUserByEmailOrPhone(String email , String phone){
+        if(email!=null){
+            return userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User email not found"));
+        }
+        else if(phone!=null){
+            return userRepository.findByPhoneNumber(phone).orElseThrow(()-> new RuntimeException("Phone Number not found"));
+        }
+        else {
+         throw new RuntimeException("kindly prpvide sufficient args");
+        }
+    }
+
+
+
+
+
+
     public void sendMobileOTP(String userAddress ,String otp){
 
             smsService.sendOtpSms(userAddress,otp);
@@ -160,6 +182,12 @@ public class UserService {
         javaMailSender.send(mailMessage);
 
     }
+
+
+
+
+
+
 
 
     private String generateOTP(){
