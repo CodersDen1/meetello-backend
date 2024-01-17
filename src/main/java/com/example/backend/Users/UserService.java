@@ -28,7 +28,7 @@ public class UserService {
     private final HashingOtp hashingOtp;
 
 
-    @Value("${HASH_SECRET}")
+    @Value("${hash.key}")
     String HASH_KEY;
     public UserService(UserRepository userRepository , ModelMapper modelMapper, JavaMailSender javaMailSender, SmsService smsService, HashingOtp hashingOtp, HashSpliter hashSpliter) {
         this.modelMapper= modelMapper;
@@ -61,12 +61,12 @@ public class UserService {
 //                requestBodyHash) {
 //               System.out.println(h);
 //           }
-           String requestHash = requestBodyHash.get(0);
+            String requestHash = requestBodyHash.get(0);
             long currentTime = System.currentTimeMillis();
 
 
             //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash) && currentTime<=storedExpiry;
+           return req.getOtp() != null && storedHash.equals(requestHash);
 
 
        } else if (req.getPhoneNumber()!=null) {
