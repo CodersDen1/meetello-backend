@@ -27,5 +27,8 @@ twilio:
 
 
 jwt:
-  key: ${"JWT"}
+  key: ${JWT}
+
+hash:
+  key: ${HASH_KEY}
 

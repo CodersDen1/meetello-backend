@@ -10,7 +10,7 @@ public class JwtAuthentication implements Authentication {
 
     String jwtKey;
     UserEntity userEntity;
-
+    boolean isRefreshToken;
     public JwtAuthentication(String jwtKey){
         this.jwtKey=jwtKey;
     }
@@ -48,5 +48,10 @@ public class JwtAuthentication implements Authentication {
     @Override
     public String getName() {
         return null;
+    }
+
+    public  boolean isRefreshToken(boolean isRefreshToken){
+        this.isRefreshToken=isRefreshToken;
+        return this.isRefreshToken;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.security;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.backend.Users.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -22,13 +23,21 @@ public class JwtAuthenticationManager implements AuthenticationManager {
        if (authentication instanceof JwtAuthentication jwtAuthentication ){
         String jwtKey = (String) jwtAuthentication.getCredentials();
 
-        var userId = jwtService.retrieveUserId(jwtKey);
+        //validating if it is a access token or refresh token
+           Algorithm algorithm = jwtService.retrieveAlgorithm(jwtKey);
+           boolean isRefreshToken = algorithm== jwtService.refreshAlgorithm();
 
-        jwtAuthentication.userEntity = userService.getUser(userId);
-        jwtAuthentication.setAuthenticated(true);
-
+        if(isRefreshToken){
+            jwtAuthentication.isRefreshToken(true);
+            return jwtAuthentication;
+        }else {
+            jwtAuthentication.isRefreshToken(false);
+        }
+           var userId = jwtService.retrieveUserId(jwtKey);
+           jwtAuthentication.userEntity = userService.getUser(userId);
+           jwtAuthentication.setAuthenticated(true);
+         //validate the access token
          return  jwtAuthentication;
-
        }
        throw  new IllegalAccessError("Cannot authenticate with non-JWT authentication");
     }

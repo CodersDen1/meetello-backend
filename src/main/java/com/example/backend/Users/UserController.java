@@ -47,6 +47,9 @@ public class UserController {
             userResponse.setToken(
                     jwtService.createJwt(user.getId())
             );
+            userResponse.setRefreshToken(
+                    jwtService.createRefreshJWT(user.getId())
+            );
             return ResponseEntity.created(userUri).body(userResponse);
         } else {
             throw new RuntimeException("Invalid OTP");
