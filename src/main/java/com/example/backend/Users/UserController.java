@@ -35,11 +35,11 @@ public class UserController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<String> generateAndSendOTP(@RequestBody GenerateOTPRequest req) throws NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<UserResponse> generateAndSendOTP(@RequestBody GenerateOTPRequest req) throws NoSuchAlgorithmException, InvalidKeyException {
         userService.generateAndSendOTP(req);
-
-
-        return ResponseEntity.ok("OTP SENT SUCCESSFULLY");
+        UserEntity user = userService.getUserByEmailOrPhone(req.getEmail(), req.getPhoneNumber());
+        var resposne = modelMapper.map(user, UserResponse.class);
+        return ResponseEntity.ok(resposne);
     }
 
     @PostMapping("/verify-otp")
@@ -49,20 +49,26 @@ public class UserController {
             UserEntity user = userService.getUserByEmailOrPhone(req.getEmail(),req.getPhoneNumber());
             URI userUri = URI.create("/users/"+user.getId());
             var userResponse = modelMapper.map(user, UserResponse.class);
-
             String jwtToken = jwtService.createJwt(user.getId());
+            String refreshToken = jwtService.createRefreshJWT(user.getId());
 
+
+            //jwtCOokie
             Cookie jwtCookie = new Cookie("jwtToken",jwtToken);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setMaxAge(60*15);
             jwtCookie.setPath("/");
 
+            //refresh jwt cookie
+            Cookie refreshJwtCookie = new Cookie("refresh-token" , refreshToken);
+            refreshJwtCookie.setHttpOnly(true);
+            refreshJwtCookie.setMaxAge(60*15);
+            refreshJwtCookie.setPath("/");
+
             response.addCookie(jwtCookie);
 
             userResponse.setToken(jwtToken);
-            userResponse.setRefreshToken(
-                    jwtService.createRefreshJWT(user.getId())
-            );
+
             return ResponseEntity.created(userUri).body(userResponse);
         } else {
             throw new RuntimeException("Invalid OTP");

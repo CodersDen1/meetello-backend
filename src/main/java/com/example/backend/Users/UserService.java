@@ -62,11 +62,10 @@ public class UserService {
 //               System.out.println(h);
 //           }
             String requestHash = requestBodyHash.get(0);
-            long currentTime = System.currentTimeMillis();
-
-
+            long currentTime=System.currentTimeMillis();
+            user.setActivated(false);
             //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash);
+           return req.getOtp() != null && storedHash.equals(requestHash) && currentTime<=storedExpiry;
 
 
        } else if (req.getPhoneNumber()!=null) {
@@ -80,6 +79,7 @@ public class UserService {
            String storedHash = storedDatabaseHashes.get(0);
            long storedExpiry = Long.parseLong(storedDatabaseHashes.get(1));
 
+
            //requested body
            List<String> requestBodyHash = List.of(hashingOtp.generateHmacSHA256(req.getOtp(), HASH_KEY).split("\\."));
 //           for (String h:
@@ -87,10 +87,10 @@ public class UserService {
 //               System.out.println(h);
 //           }
            String requestHash = requestBodyHash.get(0);
-           long currentTime = System.currentTimeMillis();
-
+            user.setActivated(false);
+            long currentTime=System.currentTimeMillis();
            //logic to check if they are equal
-           return req.getOtp() != null && storedHash.equals(requestHash);
+           return req.getOtp() != null && storedHash.equals(requestHash)  && currentTime<=storedExpiry;
 
        }
         return false;

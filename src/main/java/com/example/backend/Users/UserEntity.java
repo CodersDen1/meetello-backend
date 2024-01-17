@@ -22,6 +22,7 @@ public class UserEntity {
 
    private String phoneNumber;
 
+   private boolean activated;
 
     @NonNull
     private String otp;
