@@ -19,7 +19,7 @@ public class HashingOtp {
 
         byte [] digest = sha256.doFinal(data.getBytes());
 
-        Long expiration = System.currentTimeMillis()+30000;
+        Long expiration = System.currentTimeMillis()+2*60*1000;
 
         StringBuilder result = new StringBuilder();
         for (byte b : digest){
