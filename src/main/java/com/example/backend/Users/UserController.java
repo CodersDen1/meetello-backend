@@ -4,7 +4,10 @@ import com.example.backend.Users.dtos.GenerateOTPRequest;
 import com.example.backend.Users.dtos.UserResponse;
 import com.example.backend.Users.dtos.VerifyOtpRequest;
 import com.example.backend.security.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -33,20 +37,29 @@ public class UserController {
     @PostMapping("/generate")
     public ResponseEntity<String> generateAndSendOTP(@RequestBody GenerateOTPRequest req) throws NoSuchAlgorithmException, InvalidKeyException {
         userService.generateAndSendOTP(req);
+
+
         return ResponseEntity.ok("OTP SENT SUCCESSFULLY");
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<UserResponse> verifyOTP(@RequestBody VerifyOtpRequest req) throws NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<UserResponse> verifyOTP(@RequestBody VerifyOtpRequest req , HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeyException {
 
         if(userService.verifyOtp(req)){
             UserEntity user = userService.getUserByEmailOrPhone(req.getEmail(),req.getPhoneNumber());
             URI userUri = URI.create("/users/"+user.getId());
             var userResponse = modelMapper.map(user, UserResponse.class);
 
-            userResponse.setToken(
-                    jwtService.createJwt(user.getId())
-            );
+            String jwtToken = jwtService.createJwt(user.getId());
+
+            Cookie jwtCookie = new Cookie("jwtToken",jwtToken);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setMaxAge(60*15);
+            jwtCookie.setPath("/");
+
+            response.addCookie(jwtCookie);
+
+            userResponse.setToken(jwtToken);
             userResponse.setRefreshToken(
                     jwtService.createRefreshJWT(user.getId())
             );

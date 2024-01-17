@@ -89,8 +89,6 @@ public class UserService {
            String requestHash = requestBodyHash.get(0);
            long currentTime = System.currentTimeMillis();
 
-           if (currentTime > storedExpiry) throw new RuntimeException("This OTP is expired");
-
            //logic to check if they are equal
            return req.getOtp() != null && storedHash.equals(requestHash);
 
