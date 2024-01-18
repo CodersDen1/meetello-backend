@@ -1,5 +1,6 @@
 package com.example.backend.Users;
 
+import com.example.backend.Users.dtos.ActivateUserRequest;
 import com.example.backend.Users.dtos.GenerateOTPRequest;
 import com.example.backend.Users.dtos.VerifyOtpRequest;
 import com.example.backend.Utils.HashingOtp.HashSpliter;
@@ -10,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import javax.management.RuntimeErrorException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ClientInfoStatus;
@@ -94,6 +96,17 @@ public class UserService {
 
        }
         return false;
+    }
+
+    public void activateUser(ActivateUserRequest request  ){
+            UserEntity user = userRepository.findById(request.getId()).orElse(null);
+            if(user!=null){
+             user.setImageData(request.getImageData());
+             user.setUsername(request.getUsername());
+
+             user.setActivated(true);
+             userRepository.save(user);
+            }
     }
 
 

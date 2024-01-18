@@ -23,6 +23,8 @@ public class UserEntity {
    private String phoneNumber;
 
    private boolean activated;
+   private String username;
+   private String imageData;
 
     @NonNull
     private String otp;

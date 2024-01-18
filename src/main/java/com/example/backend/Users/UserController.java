@@ -1,5 +1,6 @@
 package com.example.backend.Users;
 
+import com.example.backend.Users.dtos.ActivateUserRequest;
 import com.example.backend.Users.dtos.GenerateOTPRequest;
 import com.example.backend.Users.dtos.UserResponse;
 import com.example.backend.Users.dtos.VerifyOtpRequest;
@@ -53,7 +54,7 @@ public class UserController {
             String refreshToken = jwtService.createRefreshJWT(user.getId());
 
 
-            //jwtCOokie
+//            //jwtCOokie
             Cookie jwtCookie = new Cookie("jwtToken",jwtToken);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setMaxAge(60*15);
@@ -62,9 +63,11 @@ public class UserController {
             //refresh jwt cookie
             Cookie refreshJwtCookie = new Cookie("refresh-token" , refreshToken);
             refreshJwtCookie.setHttpOnly(true);
-            refreshJwtCookie.setMaxAge(60*15);
+            refreshJwtCookie.setMaxAge(20*24*60*60*100);
             refreshJwtCookie.setPath("/");
 
+
+            response.addCookie(refreshJwtCookie);
             response.addCookie(jwtCookie);
 
             userResponse.setToken(jwtToken);
@@ -74,6 +77,37 @@ public class UserController {
             throw new RuntimeException("Invalid OTP");
         }
 
+
+
+
     }
+
+    @PostMapping("/activate")
+    public ResponseEntity<UserResponse> activateUser(@RequestBody ActivateUserRequest request  , HttpServletResponse res){
+           if(jwtService.retrieveUserId(request.getToken()).equals(request.getId())){
+               userService.activateUser(request);
+               String jwtToken = jwtService.createJwt(request.getId());
+               String refreshToken = jwtService.createRefreshJWT(request.getId());
+               Cookie jwtCookie = new Cookie("jwtToken",jwtToken);
+               jwtCookie.setHttpOnly(true);
+               jwtCookie.setMaxAge(60*15);
+               jwtCookie.setPath("/");
+
+               //refresh jwt cookie
+               Cookie refreshJwtCookie = new Cookie("refresh-token" , refreshToken);
+               refreshJwtCookie.setHttpOnly(true);
+               refreshJwtCookie.setMaxAge(20*24*60*60*100);
+               refreshJwtCookie.setPath("/");
+
+               res.addCookie(refreshJwtCookie);
+               res.addCookie(jwtCookie);
+
+
+               UserEntity user = userService.getUserByEmailOrPhone(request.getEmail(), request.getPhoneNumber());
+               var response = modelMapper.map(user, UserResponse.class);
+               return  ResponseEntity.ok(response);
+           }
+              throw new RuntimeException("you are authorized to post in this");
+            }
 
 }
