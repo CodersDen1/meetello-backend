@@ -34,6 +34,7 @@ public class AppSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeHttpRequest)-> authorizeHttpRequest
+                        .requestMatchers(HttpMethod.POST,"/api/users.activate").authenticated()
                         .requestMatchers(HttpMethod.POST,"/api/users/**").permitAll().anyRequest().anonymous()
                 ).formLogin(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter, AnonymousAuthenticationFilter.class);
